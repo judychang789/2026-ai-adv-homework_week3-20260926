@@ -62,6 +62,10 @@ npm run openapi
 | `npm run dev:css` | Tailwind CSS watch 模式 |
 | `npm run css:build` | 編譯並壓縮 CSS |
 | `npm run test` | 執行全部測試 |
+| `npm run test:unit` | 執行 Unit Test |
+| `npm run test:integration` | 執行獨立 SQLite Integration Test |
+| `npm run test:e2e` | 對既有 localhost 服務執行 Playwright E2E |
+| `npm run postman` | 更新 OpenAPI 並產生 Postman Collection |
 | `npm run openapi` | 生成 openapi.json |
 
 ## 文件索引

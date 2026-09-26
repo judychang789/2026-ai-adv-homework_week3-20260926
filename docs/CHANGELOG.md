@@ -5,6 +5,7 @@
 ## [Unreleased]
 
 ### Added
+- 完整測試流程：獨立 SQLite Integration Test、Playwright 綠界付款 E2E、OpenAPI 轉 Postman Collection，以及統一 npm scripts
 - 綠界 ECPay AIO 金流串接：結帳後導向綠界付款頁面完成真實付款流程
 - 新增 `src/utils/ecpay.js` 工具模組：CheckMacValue 簽章產生/驗證、ECPay 專用 URL 編碼、QueryTradeInfo API 查詢
 - 新增 `GET /ecpay/payment/:orderId` 頁面路由：產生自動送出的 ECPay 付款表單

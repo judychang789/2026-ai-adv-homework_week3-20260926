@@ -250,3 +250,39 @@ it('should work with session ID', async () => {
 ## Shipping 單元測試
 
 `src/test/shipping.test.js` 獨立驗證宅配、超商、1,499/1,500 元邊界、偏遠地區、急件、多項附加費與滿額免基本運費後仍保留附加費等 8 種情境。
+
+## 完整測試流程
+
+### Unit Test
+
+```bash
+npm run test:unit
+```
+
+只執行 `src/test/**/*.test.js`，目前包含 Shipping 純函式的 8 種費用規則測試。
+
+### Integration Test
+
+```bash
+npm run test:integration
+```
+
+使用 `vitest.integration.config.js` 與 `tests/integration/order.integration.test.js`。測試設定唯一的 `DATABASE_PATH`，在系統暫存目錄建立 SQLite，完成後關閉並刪除 SQLite、WAL 與 SHM，不會讀寫專案的 `database.sqlite`。
+
+流程涵蓋會員註冊、商品、購物車及含配送資訊的訂單，並驗證資料庫訂單、品項、運費、總額、庫存與購物車。失敗案例驗證不會產生不完整訂單或錯誤扣除庫存。
+
+### E2E Test
+
+```bash
+npm run test:e2e
+```
+
+WSL 執行時會自動使用 Windows 現有 Chrome。Playwright 直接連線至 `E2E_BASE_URL`（預設 `http://localhost:3001`），設定中沒有 `webServer`，執行前需先啟動既有專案。流程完成綠界 WebATM／土地銀行測試付款、返回商店、UI 與 API 的 `paid` 驗證；成功截圖輸出至 `docs/screenshots/ecpay-payment-success.png`。
+
+### Postman Collection
+
+```bash
+npm run postman
+```
+
+先重新產生 `openapi.json`，再輸出 `postman_collection.json`。Collection 提供 `baseUrl`、`token`、`sessionId`，登入成功後自動保存 JWT。

@@ -1,5 +1,7 @@
 # Dependencies
-node_modules/
+node_modules
+playwright-report/
+test-results//
 
 # Build output
 backend-project/public/css/output.css
@@ -16,6 +18,11 @@ backend-project/public/css/output.css
 .env
 .env.*
 !.env.example
+# Postman local environments and credentials
+*.postman_environment.json
+!*.example.postman_environment.json
+.postman/*.local.json
+.postman/credentials.json
 
 # OS files
 .DS_Store
@@ -39,3 +46,7 @@ coverage/
 .claude/*.local.json
 public/css/output.css
 qa.md
+
+# Optional local or generated assets
+postman_collection.json
+docs/screenshots/

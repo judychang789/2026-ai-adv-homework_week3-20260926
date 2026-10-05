@@ -9,6 +9,62 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
+router.post('/quote', (req, res) => {
+  const {
+    shippingMethod = SHIPPING_METHODS.HOME_DELIVERY,
+    isRemoteArea = false,
+    isSameDay = false
+  } = req.body;
+  const userId = req.user.userId;
+
+  if (!Object.values(SHIPPING_METHODS).includes(shippingMethod)
+      || typeof isRemoteArea !== 'boolean'
+      || typeof isSameDay !== 'boolean') {
+    return res.status(400).json({
+      data: null,
+      error: 'VALIDATION_ERROR',
+      message: '配送方式或配送條件格式不正確'
+    });
+  }
+
+  const cartItems = db.prepare(
+    `SELECT ci.quantity, p.price AS product_price
+     FROM cart_items ci
+     JOIN products p ON ci.product_id = p.id
+     WHERE ci.user_id = ?`
+  ).all(userId);
+
+  if (cartItems.length === 0) {
+    return res.status(400).json({
+      data: null,
+      error: 'CART_EMPTY',
+      message: '購物車為空'
+    });
+  }
+
+  const subtotalAmount = cartItems.reduce(
+    (sum, item) => sum + item.product_price * item.quantity,
+    0
+  );
+  const { shippingFee, totalAmount } = calculateShipping({
+    subtotal: subtotalAmount,
+    shippingMethod,
+    isRemoteArea,
+    isSameDay
+  });
+
+  res.json({
+    data: {
+      subtotal_amount: subtotalAmount,
+      shipping_fee: shippingFee,
+      total_amount: totalAmount
+    },
+    error: null,
+    message: '運費試算成功'
+  });
+});
+
+
 function generateOrderNo() {
   const now = new Date();
   const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');

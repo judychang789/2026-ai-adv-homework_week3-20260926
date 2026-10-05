@@ -78,18 +78,18 @@
           </div>
           <div class="flex justify-between">
             <span class="text-text-secondary">運費</span>
-            <span>{{ shippingFee === 0 ? '免運' : 'NT$ ' + shippingFee.toLocaleString() }}</span>
+            <span>{{ shippingFee === null ? '計算中…' : (shippingFee === 0 ? '免運' : 'NT$ ' + shippingFee.toLocaleString()) }}</span>
           </div>
         </div>
         <div class="border-t border-gray-100 pt-3 mt-3 flex justify-between items-center">
           <span class="font-bold text-text-primary">總計</span>
           <span class="font-bold text-xl text-rose-primary">
-            NT$ {{ orderTotal.toLocaleString() }}
+            {{ orderTotal === null ? '計算中…' : 'NT$ ' + orderTotal.toLocaleString() }}
           </span>
         </div>
         <button
           @click="submitOrder"
-          :disabled="submitting"
+          :disabled="submitting || shippingFee === null"
           class="w-full mt-4 bg-rose-primary text-white py-3 rounded-full text-sm font-medium hover:bg-rose-dark transition-colors disabled:opacity-50"
         >
           {{ submitting ? '處理中...' : '確認送出訂單' }}

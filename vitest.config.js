@@ -1,8 +1,9 @@
-import { defineConfig } from 'vitest/config';
-
+import { configDefaults, defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
+setupFiles: ['./tests/setup-test-db.js'],
+exclude: [...configDefaults.exclude, 'e2e/**'],
     fileParallelism: false,
     sequence: {
       files: [

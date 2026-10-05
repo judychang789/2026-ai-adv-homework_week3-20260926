@@ -1,4 +1,4 @@
-const { createApp, ref, computed, onMounted } = Vue;
+const { createApp, ref, computed, watch, onMounted } = Vue;
 
 createApp({
   setup() {
@@ -19,14 +19,41 @@ createApp({
       }, 0);
     });
 
-    const shippingFee = computed(function () {
-      const base = form.value.shippingMethod === 'convenience_store'
-        ? 60 : (cartTotal.value >= 1500 ? 0 : 120);
-      return base + (form.value.isRemoteArea ? 200 : 0) + (form.value.isSameDay ? 250 : 0);
+    const shippingFee = ref(null);
+
+const orderTotal = computed(function () {
+  if (shippingFee.value === null) return null;
+  return cartTotal.value + shippingFee.value;
+});
+
+async function refreshShippingFee() {
+  try {
+    const res = await apiFetch('/api/orders/quote', {
+      method: 'POST',
+      body: JSON.stringify({
+        shippingMethod: form.value.shippingMethod,
+        isRemoteArea: form.value.isRemoteArea,
+        isSameDay: form.value.isSameDay
+      })
     });
-    const orderTotal = computed(function () {
-      return cartTotal.value + shippingFee.value;
-    });
+    shippingFee.value = res.data.shipping_fee;
+  } catch (err) {
+    shippingFee.value = null;
+    Notification.show(
+      err?.data?.message || '運費試算失敗，請稍後再試',
+      'error'
+    );
+  }
+}
+
+watch(
+  () => [
+    form.value.shippingMethod,
+    form.value.isRemoteArea,
+    form.value.isSameDay
+  ],
+  refreshShippingFee
+);
 
     function validate() {
       errors.value = {};
@@ -69,7 +96,13 @@ createApp({
         window.location.href = '/cart';
         return;
       }
+
+await refreshShippingFee();
+
+
       loading.value = false;
+
+
     });
 
     return {

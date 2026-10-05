@@ -1,11 +1,22 @@
 const path = require('path');
 const { test, expect } = require('@playwright/test');
 
+require('dotenv').config();
+
+const e2eEmail = process.env.E2E_EMAIL;
+const e2ePassword = process.env.E2E_PASSWORD;
+
+if (!e2eEmail || !e2ePassword) {
+  throw new Error(
+    'E2E_EMAIL 和 E2E_PASSWORD 必須設定在環境變數或 .env 檔案中。'
+  );
+}
+
 test('customer completes ECPay WebATM payment and returns with a paid order', async ({ page }) => {
   test.slow();
   await page.goto('/login');
-  await page.locator('input[type="email"]').first().fill('admin@hexschool.com');
-  await page.locator('input[type="password"]').first().fill('12345678');
+  await page.locator('input[type="email"]').first().fill(e2eEmail);
+  await page.locator('input[type="password"]').first().fill(e2ePassword);
   await page.locator('form').getByRole('button', { name: '登入', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
 

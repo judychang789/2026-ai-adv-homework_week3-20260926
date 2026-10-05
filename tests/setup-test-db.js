@@ -1,4 +1,7 @@
-const fs = require('fs');
+process.env.JWT_SECRET = 'flower-shop-test-only-secret-not-for-production';
+
+
+ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
